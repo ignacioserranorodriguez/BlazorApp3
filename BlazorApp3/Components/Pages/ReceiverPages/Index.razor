@@ -1,0 +1,41 @@
+﻿@page "/receivers"
+
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorApp3.Models
+@using BlazorApp3.Data
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+@implements IAsyncDisposable
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="receivers/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Receiver">
+    <PropertyColumn Property="receiver => receiver.Id" />
+    <PropertyColumn Property="receiver => receiver.TransmitterId" />
+    <PropertyColumn Property="receiver => receiver.Name" />
+    <PropertyColumn Property="receiver => receiver.Ip" />
+    <PropertyColumn Property="receiver => receiver.Status" />
+
+    <TemplateColumn Context="receiver">
+        <a href="@($"receivers/edit?id={receiver.Id}")">Edit</a> |
+        <a href="@($"receivers/details?id={receiver.Id}")">Details</a> |
+        <a href="@($"receivers/delete?id={receiver.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    BlazorApp3Context context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

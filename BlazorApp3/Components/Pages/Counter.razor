@@ -1,0 +1,89 @@
+﻿@page "/counter"
+
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorApp3.Models
+@using BlazorApp3.Data
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+    <RadzenLabel Text="Transmisor" Component="DropDownBindValue" />
+    <RadzenDropDown @bind-Value=@value Data=@transmitterNames Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
+</RadzenStack>
+<br/>
+
+<RadzenStack>
+    <RadzenCard>
+        <RadzenPickList @bind-Source="@Source" @bind-Target="@Target" Style="height:500px; width:100%;" Orientation="@orientation"
+                        AllowFiltering="@allowFilter" Multiple="@multiple" ShowHeader="@showHeader" Disabled="@disabled"
+                        ButtonGap="@gap" ButtonJustifyContent="@justifyContent" ButtonStyle="@style" ButtonSize="@size" ButtonShade="@shade" ButtonVariant="@variant">
+            <SourceHeader>
+                Receptores no asignados
+            </SourceHeader>
+            <TargetHeader>
+                Receptores asignados
+            </TargetHeader>
+            <Template>
+                @context
+            </Template>
+        </RadzenPickList>
+    </RadzenCard>
+</RadzenStack>
+
+@code {
+    JustifyContent justifyContent = JustifyContent.Center;
+    Variant variant = Variant.Outlined;
+    ButtonStyle style = ButtonStyle.Primary;
+    Shade shade = Shade.Default;
+    ButtonSize size = ButtonSize.Medium;
+    Orientation orientation = Orientation.Horizontal;
+
+    string gap = "12px";
+    bool allowFilter = true;
+    bool multiple = true;
+    bool showHeader = true;
+    bool disabled;
+
+    IEnumerable<string> Source { get; set; } = new List<string>(); // Initialize Source
+    IEnumerable<string> _target = new List<string>(); // Initialize _target
+    IEnumerable<string> Target
+    {
+        get
+        {
+            return _target;
+        }
+        set
+        {
+            if (_target != value)
+            {
+                _target = value;
+
+                Console.WriteLine("Target updated");
+            }
+        }
+    }
+
+    private List<Receiver> receivers = new List<Receiver>();
+    private List<Transmitter> transmitters = new List<Transmitter>();
+    BlazorApp3Context context = default!;
+    IEnumerable<string> transmitterNames = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = await DbFactory.CreateDbContextAsync();
+        receivers = await context.Receiver.ToListAsync();
+        transmitters = await context.Transmitter.ToListAsync();
+        Source = receivers.Select(d => d.Name ?? string.Empty).ToList();
+        transmitterNames = transmitters.Select(d => d.Name ?? string.Empty).ToList();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+    string value = "Escoge uno";
+}

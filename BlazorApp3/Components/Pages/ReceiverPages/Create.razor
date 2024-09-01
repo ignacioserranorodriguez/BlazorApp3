@@ -1,0 +1,80 @@
+﻿@page "/receivers/create"
+
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using BlazorApp3.Models
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h4>Receiver</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Receiver" OnValidSubmit="AddReceiver" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="transmitterid" class="form-label">TransmitterId:</label>
+                <InputSelect id="transmitterid" @bind-Value="Receiver.TransmitterId" class="form-control">
+                    <option value="">Ninguno</option>
+                    @foreach (var transmitter in Transmitters)
+                    {
+                        <option value="@transmitter.Id">@transmitter.Name</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Receiver.TransmitterId" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Receiver.Name" class="form-control" /> 
+                <ValidationMessage For="() => Receiver.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="ip" class="form-label">Ip:</label> 
+                <InputText id="ip" @bind-Value="Receiver.Ip" class="form-control" /> 
+                <ValidationMessage For="() => Receiver.Ip" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label>
+                <InputSelect id="status" @bind-Value="Receiver.Status" class="form-control">
+                    <option value="0">Apagado</option>
+                    <option value="1">Encendido</option>
+                    <option value="2">Espera</option>
+                </InputSelect>
+                <ValidationMessage For="() => Receiver.Status" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/administrador">Back to List</a>
+</div>
+
+@code {
+    private List<Transmitter> Transmitters { get; set; } = new();
+
+    [SupplyParameterFromForm]
+    public Receiver Receiver { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Transmitters = await context.Transmitter.ToListAsync();
+    }
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddReceiver()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Receiver.Add(Receiver);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/administrador");
+    }
+}

@@ -1,0 +1,65 @@
+﻿@page "/devices/delete"
+
+@using Microsoft.EntityFrameworkCore
+@using BlazorApp3.Models
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Device</h4>
+    <hr />
+    @if (device is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@device.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Ip</dt>
+            <dd class="col-sm-10">@device.Ip</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@device.Status</dd>
+        </dl>
+        <EditForm method="post" Model="device" OnValidSubmit="DeleteDevice" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(device is null)">Delete</button> |
+            <a href="/devices">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    Device? device;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        device = await context.Device.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (device is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    public async Task DeleteDevice()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Device.Remove(device!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/administrador");
+    }
+}

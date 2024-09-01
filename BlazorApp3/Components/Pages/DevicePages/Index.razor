@@ -1,0 +1,83 @@
+﻿@page "/devices"
+@page "/administrador"
+
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorApp3.Models
+@using BlazorApp3.Data
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+@implements IAsyncDisposable
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="transmitters/create">Crear nuevo transmisor</a>
+</p>
+<p>
+    <a href="receivers/create">Crear nuevo receptor</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Device">
+    <PropertyColumn Property="device => device.Id" />
+    <PropertyColumn Property="device => device.Name" />
+    <PropertyColumn Property="device => device.Ip" />
+
+    <TemplateColumn Context="device" Title="Status">
+        @{
+            string statusText = device.Status switch
+            {
+                0 => "Apagado",
+                1 => "Encendido",
+                2 => "Espera",
+                _ => "Unknown"
+            };
+        }
+        <span>@statusText</span>
+    </TemplateColumn>
+
+    <TemplateColumn Context="device" Title="Url">
+        @{
+            if (device is Transmitter transmitter)
+            {
+                <span>@transmitter.Url</span>
+            }
+        }
+    </TemplateColumn>
+
+    <TemplateColumn Context="device" Title="TransmitterId">
+        @{
+            if (device is Receiver receiver)
+            {
+                <span>@receiver.TransmitterId</span>
+            }
+        }
+    </TemplateColumn>
+
+    <TemplateColumn Context="device">
+        @{
+            if (device is Transmitter transmitter)
+            {
+                <a href="@($"transmitters/edit?id={transmitter.Id}")">Editar </a>
+                <a href="@($"transmitters/delete?id={transmitter.Id}")">Eliminar </a>
+            }
+            else if (device is Receiver receiver)
+            {
+                <a href="@($"receivers/edit?id={receiver.Id}")">Editar </a>
+                <a href="@($"receivers/delete?id={receiver.Id}")">Eliminar </a>
+            }
+        }
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    BlazorApp3Context context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

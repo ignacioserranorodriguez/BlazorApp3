@@ -1,0 +1,56 @@
+﻿@page "/devices/create"
+
+@using Microsoft.EntityFrameworkCore
+@using BlazorApp3.Models
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h4>Device</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Device" OnValidSubmit="AddDevice" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label> 
+                <InputText id="name" @bind-Value="Device.Name" class="form-control" /> 
+                <ValidationMessage For="() => Device.Name" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="ip" class="form-label">Ip:</label> 
+                <InputText id="ip" @bind-Value="Device.Ip" class="form-control" /> 
+                <ValidationMessage For="() => Device.Ip" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label> 
+                <InputNumber id="status" @bind-Value="Device.Status" class="form-control" /> 
+                <ValidationMessage For="() => Device.Status" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/administrador">Back to List</a>
+</div>
+
+@code {
+
+    [SupplyParameterFromForm]
+    public Device Device { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddDevice()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Device.Add(Device);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/administrador");
+    }
+}

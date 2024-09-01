@@ -1,0 +1,100 @@
+﻿@page "/Devices/edit"
+
+@using Microsoft.EntityFrameworkCore
+@using BlazorApp3.Models
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>Device</h4>
+<hr />
+@if (Device is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Device" OnValidSubmit="UpdateDevice" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="Device.Id" value="@Device.Id" />
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="Device.Name" class="form-control" />
+                    <ValidationMessage For="() => Device.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="ip" class="form-label">Ip:</label>
+                    <InputText id="ip" @bind-Value="Device.Ip" class="form-control" />
+                    <ValidationMessage For="() => Device.Ip" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status:</label>
+                    <InputNumber id="status" @bind-Value="Device.Status" class="form-control" />
+                    <ValidationMessage For="() => Device.Status" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/administrador">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public Device? Device { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Device ??= await context.Device.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Device is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateDevice()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Device!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!DeviceExists(Device!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/administrador");
+    }
+
+    bool DeviceExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Device.Any(e => e.Id == id);
+    }
+}

@@ -1,0 +1,111 @@
+﻿@page "/Transmitters/edit"
+
+@rendermode InteractiveServer
+
+@using Microsoft.EntityFrameworkCore
+@using BlazorApp3.Models
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>Transmitter</h4>
+<hr />
+@if (Transmitter is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Transmitter" OnValidSubmit="UpdateTransmitter" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="Transmitter.Id" value="@Transmitter.Id" />
+                <div class="mb-3">
+                    <label for="url" class="form-label">Url:</label>
+                    <InputText id="url" @bind-Value="Transmitter.Url" class="form-control" />
+                    <ValidationMessage For="() => Transmitter.Url" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="Transmitter.Name" class="form-control" />
+                    <ValidationMessage For="() => Transmitter.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="ip" class="form-label">Ip:</label>
+                    <InputText id="ip" @bind-Value="Transmitter.Ip" class="form-control" />
+                    <ValidationMessage For="() => Transmitter.Ip" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status:</label>
+                    <InputSelect id="status" @bind-Value="Transmitter.Status" class="form-control">
+                        <option value="0">Apagado</option>
+                        <option value="1">Encendido</option>
+                        <option value="2">Espera</option>
+                    </InputSelect>
+                    <ValidationMessage For="() => Transmitter.Status" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/administrador">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public Transmitter? Transmitter { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Transmitter ??= await context.Transmitter.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (Transmitter is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateTransmitter()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Transmitter!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!TransmitterExists(Transmitter!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/administrador");
+    }
+
+    bool TransmitterExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Transmitter.Any(e => e.Id == id);
+    }
+}

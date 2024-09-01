@@ -1,0 +1,53 @@
+﻿@page "/receivers/details"
+
+@using Microsoft.EntityFrameworkCore
+@using BlazorApp3.Models
+@inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>Receiver</h4>
+    <hr />
+    @if (receiver is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">TransmitterId</dt>
+            <dd class="col-sm-10">@receiver.TransmitterId</dd>
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@receiver.Name</dd>
+            <dt class="col-sm-2">Ip</dt>
+            <dd class="col-sm-10">@receiver.Ip</dd>
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@receiver.Status</dd>
+        </dl>
+        <div>
+            <a href="@($"/receivers/edit?id={receiver.Id}")">Edit</a> |
+            <a href="@($"/receivers")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    Receiver? receiver;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        receiver = await context.Receiver.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (receiver is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
