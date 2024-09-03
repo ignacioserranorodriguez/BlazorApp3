@@ -5,8 +5,9 @@ using BlazorApp3.Data;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
 builder.Services.AddDbContextFactory<BlazorApp3Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BlazorApp3Context") ?? throw new InvalidOperationException("Connection string 'BlazorApp3Context' not found.")));
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 

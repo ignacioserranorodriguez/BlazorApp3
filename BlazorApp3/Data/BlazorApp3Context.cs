@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using BlazorApp3.Models;
 
 namespace BlazorApp3.Data
@@ -14,20 +10,26 @@ namespace BlazorApp3.Data
         {
         }
 
-        public DbSet<BlazorApp3.Models.Device> Device { get; set; } = default!;
-        public DbSet<BlazorApp3.Models.Transmitter> Transmitter { get; set; } = default!;
-        public DbSet<BlazorApp3.Models.Receiver> Receiver { get; set; } = default!;
+        public DbSet<Device> Device { get; set; } = default!;
+        public DbSet<Transmitter> Transmitter { get; set; } = default!;
+        public DbSet<Receiver> Receiver { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Device>(entity =>
+            {
+                entity.Property(e => e.Name).HasColumnType("varchar(255)").IsRequired();
+                entity.Property(e => e.Ip).HasColumnType("varchar(255)");
+            });
+
             modelBuilder.Entity<Receiver>()
                 .HasOne(r => r.Transmitter)
                 .WithMany()
                 .HasForeignKey("TransmitterId")
-                .OnDelete(DeleteBehavior.Restrict) // Specify ON DELETE NO ACTION
-                .IsRequired(false); // Allow null values
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
         }
     }
 }
