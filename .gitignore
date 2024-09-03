@@ -1,9 +1,34 @@
-# Visual studio
+# Visual Studio
 .vs/
+.vscode/
 
 # Build artifacts
 BlazorApp3/bin/
 BlazorApp3/obj/
 
+# User-specific files
+BlazorApp3/BlazorApp3.csproj.user
+
 # LibMan
 BlazorApp3/wwwroot/lib/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.old
+
+# IDE-specific files
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Configuration files
+BlazorApp3/appsettings.Development.json
