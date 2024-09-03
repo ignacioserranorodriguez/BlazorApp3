@@ -8,23 +8,21 @@
 @inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
 @implements IAsyncDisposable
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Matriz de vídeo - Administrador</PageTitle>
 
-<h1>Index</h1>
+<h1>Administrador de dispositivos</h1>
 
 <p>
-    <a href="transmitters/create">Crear nuevo transmisor</a>
-</p>
-<p>
-    <a href="receivers/create">Crear nuevo receptor</a>
+    <a href="transmitters/create">➕ Crear ➡️ transmisor</a><br/>
+    <a href="receivers/create">➕ Crear ⬅️ receptor</a>
 </p>
 
 <QuickGrid Class="table" Items="context.Device">
-    <PropertyColumn Property="device => device.Id" />
-    <PropertyColumn Property="device => device.Name" />
-    <PropertyColumn Property="device => device.Ip" />
+    <PropertyColumn Property="device => device.Id" Title="ID" />
+    <PropertyColumn Property="device => device.Name" Title="Nombre" />
+    <PropertyColumn Property="device => device.Ip" Title="IP" />
 
-    <TemplateColumn Context="device" Title="Status">
+    <TemplateColumn Context="device" Title="Estado">
         @{
             string statusText = device.Status switch
             {
@@ -37,7 +35,7 @@
         <span>@statusText</span>
     </TemplateColumn>
 
-    <TemplateColumn Context="device" Title="Url">
+    <TemplateColumn Context="device" Title="URL">
         @{
             if (device is Transmitter transmitter)
             {
@@ -46,7 +44,7 @@
         }
     </TemplateColumn>
 
-    <TemplateColumn Context="device" Title="TransmitterId">
+    <TemplateColumn Context="device" Title="ID Transmisor">
         @{
             if (device is Receiver receiver)
             {
@@ -59,13 +57,13 @@
         @{
             if (device is Transmitter transmitter)
             {
-                <a href="@($"transmitters/edit?id={transmitter.Id}")">Editar </a>
-                <a href="@($"transmitters/delete?id={transmitter.Id}")">Eliminar </a>
+                <a href="@($"transmitters/edit?id={transmitter.Id}")">✏️ Editar </a>
+                <a href="@($"transmitters/delete?id={transmitter.Id}")">🗑️ Eliminar </a>
             }
             else if (device is Receiver receiver)
             {
-                <a href="@($"receivers/edit?id={receiver.Id}")">Editar </a>
-                <a href="@($"receivers/delete?id={receiver.Id}")">Eliminar </a>
+                <a href="@($"receivers/edit?id={receiver.Id}")">✏️ Editar </a>
+                <a href="@($"receivers/delete?id={receiver.Id}")">🗑️ Eliminar </a>
             }
         }
     </TemplateColumn>
