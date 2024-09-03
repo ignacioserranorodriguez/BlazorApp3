@@ -1,0 +1,9 @@
+# Visual studio
+.vs/
+
+# Build artifacts
+BlazorApp3/bin/
+BlazorApp3/obj/
+
+# LibMan
+BlazorApp3/wwwroot/lib/
