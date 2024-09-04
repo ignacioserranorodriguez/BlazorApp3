@@ -8,51 +8,73 @@
 @using BlazorApp3.Data
 @inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Matriz de vídeo - Asignador</PageTitle>
 
-<h1>Counter</h1>
+<h1>Asignador entre Transmisores y Receptores</h1><br />
 
-<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem">
-    <RadzenLabel Text="Transmisor" Component="DropDownBindValue" />
-    <RadzenDropDown @bind-Value=@value Data=@transmitterNames Style="width: 100%; max-width: 400px;" Name="DropDownBindValue" />
-</RadzenStack>
-<br/>
+<RadzenLabel Text="Select Value" Component="DropDownChangeEvent" />
+<RadzenDropDown @bind-Value=@transmitterSelectedValue Data=@transmitters TextProperty="@nameof(Transmitter.Name)"
+    ValueProperty="Id" Style="width: 100%; max-width: 400px;" Name="DropDownChangeEvent"
+    Change="@(args => update((int)args))" />
 
-<RadzenStack>
-    <RadzenCard>
-        <RadzenPickList @bind-Source="@Source" @bind-Target="@Target" Style="height:500px; width:100%;" Orientation="@orientation"
-                        AllowFiltering="@allowFilter" Multiple="@multiple" ShowHeader="@showHeader" Disabled="@disabled"
-                        ButtonGap="@gap" ButtonJustifyContent="@justifyContent" ButtonStyle="@style" ButtonSize="@size" ButtonShade="@shade" ButtonVariant="@variant">
-            <SourceHeader>
-                Receptores no asignados
-            </SourceHeader>
-            <TargetHeader>
-                Receptores asignados
-            </TargetHeader>
-            <Template>
-                @context
-            </Template>
-        </RadzenPickList>
-    </RadzenCard>
-</RadzenStack>
+<br />
+
+<RadzenCard>
+    <RadzenPickList @bind-Source="@Source" @bind-Target="@Target" Style="height:500px; width:100%;"
+        Orientation="@orientation" TextProperty="@nameof(Receiver.Name)" AllowFiltering="@allowFilter"
+        Multiple="@multiple" ShowHeader="@showHeader" Disabled="@disabled" ButtonGap="@gap"
+        ButtonJustifyContent="@justifyContent" ButtonStyle="@style" ButtonSize="@size" ButtonShade="@shade"
+        ButtonVariant="@variant">
+        <SourceHeader>
+            Receptores no asignados
+        </SourceHeader>
+        <TargetHeader>
+            Receptores asignados
+        </TargetHeader>
+        <Template>
+            @context.Name
+        </Template>
+    </RadzenPickList>
+</RadzenCard><br />
+
+<RadzenButton Click=@(args => OnClick("Primary button")) Text="Guardar" ButtonStyle="ButtonStyle.Primary" />
+
 
 @code {
+
     JustifyContent justifyContent = JustifyContent.Center;
     Variant variant = Variant.Outlined;
-    ButtonStyle style = ButtonStyle.Primary;
+    ButtonStyle style = ButtonStyle.Secondary;
     Shade shade = Shade.Default;
     ButtonSize size = ButtonSize.Medium;
     Orientation orientation = Orientation.Horizontal;
 
     string gap = "12px";
     bool allowFilter = true;
-    bool multiple = true;
+    bool multiple = false;
     bool showHeader = true;
     bool disabled;
 
-    IEnumerable<string> Source { get; set; } = new List<string>(); // Initialize Source
-    IEnumerable<string> _target = new List<string>(); // Initialize _target
-    IEnumerable<string> Target
+    IEnumerable<Receiver> _source;
+    IEnumerable<Receiver> Source
+    {
+        get
+        {
+            return _source;
+        }
+        set
+        {
+            if (_source != value)
+            {
+                _source = value;
+
+                Console.WriteLine("Source updated");
+            }
+        }
+    }
+
+    IEnumerable<Receiver> _target;
+    IEnumerable<Receiver> Target
     {
         get
         {
@@ -69,21 +91,53 @@
         }
     }
 
-    private List<Receiver> receivers = new List<Receiver>();
-    private List<Transmitter> transmitters = new List<Transmitter>();
     BlazorApp3Context context = default!;
-    IEnumerable<string> transmitterNames = new List<string>();
+    private List<Transmitter> transmitters = new List<Transmitter>();
+    private List<Receiver> receivers = new List<Receiver>();
+    int? transmitterSelectedValue;
+    Transmitter selectedTransmitter;
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         context = await DbFactory.CreateDbContextAsync();
         receivers = await context.Receiver.ToListAsync();
         transmitters = await context.Transmitter.ToListAsync();
-        Source = receivers.Select(d => d.Name ?? string.Empty).ToList();
-        transmitterNames = transmitters.Select(d => d.Name ?? string.Empty).ToList();
+
+
+        Source = receivers;
     }
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+    private void update(int id)
+    {
+        selectedTransmitter = transmitters.First(t => t.Id == id);
+        IEnumerable<Receiver> receiversAssigned = receivers.Where(r => r.TransmitterId == selectedTransmitter.Id);
+        Target = receiversAssigned;
 
-    string value = "Escoge uno";
+        IEnumerable<Receiver> receiversNotAsigned = new List<Receiver>();
+        foreach (var receiver in receivers)
+        {
+            bool containsItem = receiversAssigned.Any(item => item.Id == receiver.Id);
+
+            if (!containsItem)
+            {
+                receiversNotAsigned.Append(receiver);
+            }
+        }
+
+
+
+        Source = receiversNotAsigned;
+    }
+
+    private void OnClick(string buttonName)
+
+    {
+
+        // Handle the button click event here
+
+    }
+
+
 }
