@@ -9,6 +9,35 @@ function Stop-DockerCompose {
     docker-compose down
 }
 
+# Function to wait for Docker containers to be ready
+function Wait-ForDockerContainers {
+    Write-Host "Waiting for Docker containers to be ready..."
+    $containers = docker-compose ps -q
+    foreach ($container in $containers) {
+        while ($true) {
+            $status = docker inspect -f '{{.State.Status}}' $container
+            if ($status -eq 'running') {
+                break
+            }
+        }
+    }
+    Write-Host "Docker containers are ready."
+}
+
+# Function to wait for MySQL service to be healthy
+function Wait-ForMySQL {
+    Write-Host "Waiting for MySQL service to be healthy..."
+    $mysqlContainer = docker-compose ps -q mysql
+    while ($true) {
+        $healthStatus = docker inspect -f '{{.State.Health.Status}}' $mysqlContainer
+        if ($healthStatus -eq 'healthy') {
+            break
+        }
+        Start-Sleep -Seconds 1  # Check every 1 second
+    }
+    Write-Host "MySQL service is healthy."
+}
+
 # Register an event handler for Ctrl+C (SIGINT)
 $eventHandler = {
     Stop-DockerCompose
@@ -19,6 +48,12 @@ $null = Register-EngineEvent -SourceIdentifier ConsoleBreak -Action $eventHandle
 try {
     # Run docker-compose up command
     docker-compose up -d
+
+    # Wait for Docker containers to be ready
+    Wait-ForDockerContainers
+
+    # Wait for MySQL service to be healthy
+    Wait-ForMySQL
 
     # Update-Database from NuGet Package Manager Console
     Set-Location -Path "$PSScriptRoot\BlazorApp3"
