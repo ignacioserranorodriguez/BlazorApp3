@@ -14,8 +14,10 @@
 
 <h3>Transmisores</h3>
 
-<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false"
-                Data="@transmitters" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false"
+    FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false"
+    PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false" Data="@transmitters" ColumnWidth="300px"
+    LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
     <Columns>
         <RadzenDataGridColumn Title="Imagen" Width="200px" TextAlign="TextAlign.Center">
             <Template Context="data">
@@ -25,7 +27,49 @@
                 }
             </Template>
         </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="Name" Title="Nombre" Width="300px" />
+        <RadzenDataGridColumn Property="Name" Title="Nombre" Width="150px" />
+        <RadzenDataGridColumn Title="Estado" Width="300px">
+            <Template Context="data">
+                @if (data.Status == 0)
+                {
+                    <span>Apagado</span>
+                }
+                else if (data.Status == 1)
+                {
+                    <span>Encendido</span>
+                }
+                else if (data.Status == 2)
+                {
+                    <span>Espera</span>
+                }
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid><br />
+
+<h3>Receptores</h3>
+
+<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false"
+    FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false"
+    PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false" Data="@receivers" ColumnWidth="300px"
+    LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+    <Columns>
+        <RadzenDataGridColumn Title="Imagen" Width="200px" TextAlign="TextAlign.Center">
+            <Template Context="data">
+                @if (data.Status != 0 && data.Status != 2)
+                {
+                    @if (data.Status != 0 && data.Status != 2)
+                    {
+                        var transmitter = transmitters.FirstOrDefault(t => t.Id == data.TransmitterId && t.Status == 1);
+                        if (transmitter != null)
+                        {
+                            <RadzenImage Path="@transmitter.Url" Style="width: 15rem;" AlternateText="Image" />
+                        }
+                    }
+                }
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="Name" Title="Nombre" Width="150px" />
         <RadzenDataGridColumn Title="Estado" Width="300px">
             <Template Context="data">
                 @if (data.Status == 0)
@@ -45,45 +89,14 @@
     </Columns>
 </RadzenDataGrid>
 
-<h3>Receptores</h3>
-
-<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false"
-                Data="@images" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
-    <Columns>
-        <RadzenDataGridColumn Width="200px" TextAlign="TextAlign.Center">
-            <Template Context="data">
-                <RadzenImage Path="@data.Url" class="rz-gravatar" AlternateText="Image" />
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="Description" Width="300px" />
-    </Columns>
-</RadzenDataGrid>
 
 @code {
-    IEnumerable<ImageItem> images;
 
-    protected override void OnInitialized()
-    {
-        images = new List<ImageItem>
-        {
-            new ImageItem { Url = "https://via.placeholder.com/150", Description = "Placeholder Image 1" },
-            new ImageItem { Url = "https://via.placeholder.com/150", Description = "Placeholder Image 2" },
-            new ImageItem { Url = "https://via.placeholder.com/150", Description = "Placeholder Image 3" },
-            new ImageItem { Url = "https://via.placeholder.com/150", Description = "Placeholder Image 4" },
-            new ImageItem { Url = "https://via.placeholder.com/150", Description = "Placeholder Image 5" }
-        };
-    }
-
-    public class ImageItem
-    {
-        public string Url { get; set; }
-        public string Description { get; set; }
-    }
-
-    private List<Receiver> receivers = new List<Receiver>();
-    private List<Transmitter> transmitters = new List<Transmitter>();
     BlazorApp3Context context = default!;
+    private List<Transmitter> transmitters = new List<Transmitter>();
+    private List<Receiver> receivers = new List<Receiver>();
     IEnumerable<string> transmitterNames = new List<string>();
+    IEnumerable<string> receiverNames = new List<string>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -91,6 +104,7 @@
         receivers = await context.Receiver.ToListAsync();
         transmitters = await context.Transmitter.ToListAsync();
         transmitterNames = transmitters.Select(d => d.Name ?? string.Empty).ToList();
+        receiverNames = receivers.Select(d => d.Name ?? string.Empty).ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
