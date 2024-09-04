@@ -31,4 +31,5 @@ catch {
 finally {
     # Ensure Docker containers are stopped
     Stop-DockerCompose
+    Set-Location -Path "..\"
 }
