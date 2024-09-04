@@ -13,42 +13,50 @@
 <h1>Administrador de dispositivos</h1>
 
 <p>
-    <a href="transmitters/create">➕ Crear ➡️ transmisor</a><br/>
+    <a href="transmitters/create">➕ Crear ➡️ transmisor</a><br />
     <a href="receivers/create">➕ Crear ⬅️ receptor</a>
 </p>
 
 <QuickGrid Class="table" Items="context.Device">
     <PropertyColumn Property="device => device.Id" Title="ID" />
+
+    <TemplateColumn Context="device" Title="Tipo">
+        @if (device is Transmitter)
+        {
+            <span>T</span>
+        }
+        else if (device is Receiver)
+        {
+            <span>R</span>
+        }
+    </TemplateColumn>
+
     <PropertyColumn Property="device => device.Name" Title="Nombre" />
     <PropertyColumn Property="device => device.Ip" Title="IP" />
-
-    <TemplateColumn Context="device" Title="Estado">
-        @{
-            string statusText = device.Status switch
-            {
-                0 => "Apagado",
-                1 => "Encendido",
-                2 => "Espera",
-                _ => "Unknown"
-            };
-        }
-        <span>@statusText</span>
-    </TemplateColumn>
 
     <TemplateColumn Context="device" Title="URL">
         @{
             if (device is Transmitter transmitter)
             {
-                <span>@transmitter.Url.Substring(transmitter.Url.LastIndexOf('/') + 1).Replace(".png", "").Replace(".jpg", "").Replace(".jpeg", "").Replace(".gif", "").Replace(".bmp", "").Replace("-", " ").Replace("_", " ")</span>
+                <span>@transmitter.Url.Substring(transmitter.Url.LastIndexOf('/') + 1).Replace(".png", "").Replace(".jpg",
+                       "").Replace(".jpeg", "").Replace(".gif", "").Replace(".bmp", "").Replace("-", " ").Replace("_", " ")</span>
+            }
+            else
+            {
+                <span>No puede tener</span>
             }
         }
     </TemplateColumn>
 
-    <TemplateColumn Context="device" Title="ID Transmisor">
+    <TemplateColumn Context="device" Title="ID Transmisor asociado">
         @{
             if (device is Receiver receiver)
             {
                 <span>@receiver.TransmitterId</span>
+            }
+            else
+            {
+                <span>No puede tener</span>
             }
         }
     </TemplateColumn>
