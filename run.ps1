@@ -59,14 +59,21 @@ try {
     Set-Location -Path "$PSScriptRoot\BlazorApp3"
     dotnet ef database update
 
-    # Insert mock data into the database
-    Write-Host "Inserting mock data into the database..."
+    # Check if mock data already exists
     $mysqlContainer = docker-compose ps -q mysql
-    $mockData = Get-Content -Path "$PSScriptRoot\mock_data.sql" -Raw
-    $mockData | docker exec -i $mysqlContainer mysql -u root -proot_password videomatrix
+    $checkData = docker exec -i $mysqlContainer mysql -u root -proot_password -e "SELECT COUNT(*) FROM Device;" videomatrix
+    if ($checkData -match "0") {
+        # Insert mock data into the database
+        Write-Host "Inserting mock data into the database..."
+        $mockData = Get-Content -Path "$PSScriptRoot\mock_data.sql" -Raw
+        $mockData | docker exec -i $mysqlContainer mysql -u root -proot_password videomatrix
+    }
+    else {
+        Write-Host "Mock data already exists in the database."
+    }
 
-    # Run the Blazor web app in the foreground
-    dotnet run --project BlazorApp3.csproj
+    # Run the Blazor web app with active reload
+    dotnet watch run --project BlazorApp3.csproj
 }
 catch {
     Write-Host "An error occurred: $_"
