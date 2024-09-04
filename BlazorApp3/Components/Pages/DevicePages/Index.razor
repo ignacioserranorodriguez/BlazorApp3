@@ -39,7 +39,7 @@
         @{
             if (device is Transmitter transmitter)
             {
-                <span>@transmitter.Url</span>
+                <span>@transmitter.Url.Substring(transmitter.Url.LastIndexOf('/') + 1).Replace(".png", "").Replace(".jpg", "").Replace(".jpeg", "").Replace(".gif", "").Replace(".bmp", "").Replace("-", " ").Replace("_", " ")</span>
             }
         }
     </TemplateColumn>
