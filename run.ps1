@@ -59,6 +59,12 @@ try {
     Set-Location -Path "$PSScriptRoot\BlazorApp3"
     dotnet ef database update
 
+    # Insert mock data into the database
+    Write-Host "Inserting mock data into the database..."
+    $mysqlContainer = docker-compose ps -q mysql
+    $mockData = Get-Content -Path "$PSScriptRoot\mock_data.sql" -Raw
+    $mockData | docker exec -i $mysqlContainer mysql -u root -proot_password videomatrix
+
     # Run the Blazor web app in the foreground
     dotnet run --project BlazorApp3.csproj
 }
