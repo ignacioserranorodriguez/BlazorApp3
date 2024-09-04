@@ -1,3 +1,5 @@
+# File: run.ps1
+
 # Navigate to the project directory
 Set-Location -Path "$PSScriptRoot"
 
@@ -19,10 +21,10 @@ try {
     docker-compose up -d
 
     # Update-Database from NuGet Package Manager Console
+    Set-Location -Path "$PSScriptRoot\BlazorApp3"
     dotnet ef database update
 
     # Run the Blazor web app in the foreground
-    Set-Location -Path "$PSScriptRoot\BlazorApp3"
     dotnet run --project BlazorApp3.csproj
 }
 catch {
@@ -31,5 +33,6 @@ catch {
 finally {
     # Ensure Docker containers are stopped
     Stop-DockerCompose
-    Set-Location -Path "..\"
+    # Navigate back to the original directory
+    Set-Location -Path "$PSScriptRoot"
 }
