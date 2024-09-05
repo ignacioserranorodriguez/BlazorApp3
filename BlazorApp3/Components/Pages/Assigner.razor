@@ -15,7 +15,7 @@
 <RadzenLabel Text="Selecciona un transmisor" Component="DropDownChangeEvent" />
 <RadzenDropDown @bind-Value=@transmitterSelectedValue Data=@transmitters TextProperty="@nameof(Transmitter.Name)"
     ValueProperty="Id" Style="width: 100%; max-width: 400px;" Name="DropDownChangeEvent"
-    Change="@(args => update((int)args))" />
+    Change="@(transmitterSelectedId => update((int)transmitterSelectedId))" />
 
 <br /><br />
 
@@ -29,15 +29,16 @@
     <TargetHeader>
         Receptores asignados
     </TargetHeader>
-    <Template>
-        @context.Name
+    <Template Context="context">
+        <div key="@context.Id">
+            @context.Name (@transmitters.First(t => t.Id == context.TransmitterId).Name)
+        </div>
     </Template>
 </RadzenPickList>
 
 <br />
 
 <RadzenButton Click=@(args => Save("Primary button")) Text="Guardar" ButtonStyle="ButtonStyle.Primary" />
-
 
 @code {
 
@@ -97,24 +98,31 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
         context = await DbFactory.CreateDbContextAsync();
         receivers = await context.Receiver.ToListAsync();
         transmitters = await context.Transmitter.ToListAsync();
-
-        Source = receivers;
     }
 
     private void update(int id)
     {
         Transmitter selectedTransmitter = transmitters.First(t => t.Id == id);
-        Target = receivers.Where(r => r.TransmitterId == selectedTransmitter.Id);
         Source = receivers.Where(r => r.TransmitterId != selectedTransmitter.Id);
+        Target = receivers.Where(r => r.TransmitterId == selectedTransmitter.Id);
     }
 
-    private void Save(string buttonName)
+    private async void Save(string buttonName)
     {
+        if (Target != null)
+        {
+            foreach (Receiver receiver in Target)
+            {
+                Console.WriteLine("- " + receiver.Name);
+                Console.WriteLine(receiver.TransmitterId);
+                receiver.TransmitterId = transmitterSelectedValue;
+                Console.WriteLine(receiver.TransmitterId);
+            }
+        }
 
-
+        await context.SaveChangesAsync();
     }
 }
