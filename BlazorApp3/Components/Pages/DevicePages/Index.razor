@@ -58,11 +58,11 @@
         }
     </TemplateColumn>
 
-    <TemplateColumn Context="device" Title="ID Transmisor asociado">
+    <TemplateColumn Context="device" Title="Transmisor asociado">
         @{
             if (device is Receiver receiver)
             {
-                <span>@receiver.TransmitterId</span>
+                <span>@receiver.Transmitter.Name</span>
             }
             else
             {

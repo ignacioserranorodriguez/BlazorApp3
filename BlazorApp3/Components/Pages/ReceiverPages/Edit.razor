@@ -43,8 +43,12 @@ else
                 </div>
                 <div class="mb-3">
                     <label for="transmitterid" class="form-label">Transmisor asociado</label>
-                    <InputNumber disabled="true" id="transmitterid" @bind-Value="Receiver.TransmitterId"
-                        class="form-control" />
+                    <select disabled id="transmitterid" @bind="Receiver.TransmitterId" class="form-control">
+                        @foreach (var transmitter in Transmitters)
+                        {
+                            <option value="@transmitter.Id">@transmitter.Name</option>
+                        }
+                    </select>
                     <ValidationMessage For="() => Receiver.TransmitterId" class="text-danger" />
                 </div>
                 <div class="mb-3">
