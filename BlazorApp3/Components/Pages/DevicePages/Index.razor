@@ -12,9 +12,9 @@
 
 <h1>Administrador de dispositivos</h1><br />
 
-<p>
-    <a href="transmitters/create">➕ Crear ➡️ transmisor</a><br />
-    <a href="receivers/create">➕ Crear ⬅️ receptor</a>
+<p style="text-decoration: none;">
+    <a href="transmitters/create" style="text-decoration: none;">➕ Crear ➡️ transmisor</a><br />
+    <a href="receivers/create" style="text-decoration: none;">➕ Crear ⬅️ receptor</a>
 </p>
 
 <QuickGrid Class="table" Items="context.Device">
@@ -32,7 +32,17 @@
     </TemplateColumn>
 
     <PropertyColumn Property="device => device.Name" Title="Nombre" />
-    <PropertyColumn Property="device => device.Ip" Title="IP" />
+
+    <TemplateColumn Context="device" Title="Estado">
+        @if (device is Transmitter transmitter)
+        {
+            <span>@(transmitter.Status == 0 ? "Apagado" : transmitter.Status == 1 ? "Encendido" : "Espera")</span>
+        }
+        else if (device is Receiver receiver)
+        {
+            <span>@(receiver.Status == 0 ? "Apagado" : receiver.Status == 1 ? "Encendido" : "Espera")</span>
+        }
+    </TemplateColumn>
 
     <TemplateColumn Context="device" Title="URL">
         @{
@@ -61,18 +71,18 @@
         }
     </TemplateColumn>
 
+    <PropertyColumn Property="device => device.Ip" Title="IP" />
+
     <TemplateColumn Context="device">
-        @{
-            if (device is Transmitter transmitter)
-            {
-                <a href="@($"transmitters/edit?id={transmitter.Id}")">✏️ Editar </a>
-                <a href="@($"transmitters/delete?id={transmitter.Id}")">🗑️ Eliminar </a>
-            }
-            else if (device is Receiver receiver)
-            {
-                <a href="@($"receivers/edit?id={receiver.Id}")">✏️ Editar </a>
-                <a href="@($"receivers/delete?id={receiver.Id}")">🗑️ Eliminar </a>
-            }
+        @if (device is Transmitter transmitter)
+        {
+            <a href="@($"transmitters/edit?id={transmitter.Id}")" style="text-decoration: none;">✏️</a>
+            <a href="@($"transmitters/delete?id={transmitter.Id}")" style="text-decoration: none;">🗑️</a>
+        }
+        else if (device is Receiver receiver)
+        {
+            <a href="@($"receivers/edit?id={receiver.Id}")" style="text-decoration: none;">✏️</a>
+            <a href="@($"receivers/delete?id={receiver.Id}")" style="text-decoration: none;">🗑️</a>
         }
     </TemplateColumn>
 </QuickGrid>
