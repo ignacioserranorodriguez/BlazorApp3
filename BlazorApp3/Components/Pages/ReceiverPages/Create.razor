@@ -7,11 +7,12 @@
 @inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Matriz de vídeo - Administrador</PageTitle>
 
-<h1>Create</h1>
+<h1>Administrador de dispositivos</h1><br />
 
-<h4>Receiver</h4>
+<h4><a href="/administrador" style="text-decoration: none;">⬅️</a> Crear🗼Receptor</h4>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,7 +20,21 @@
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" />
             <div class="mb-3">
-                <label for="transmitterid" class="form-label">TransmitterId:</label>
+                <label for="name" class="form-label">Nombre</label>
+                <InputText id="name" @bind-Value="Receiver.Name" class="form-control" />
+                <ValidationMessage For="() => Receiver.Name" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="status" class="form-label">Estado</label>
+                <InputSelect id="status" @bind-Value="Receiver.Status" class="form-control">
+                    <option value="0">⬛ Apagado</option>
+                    <option value="1">🟩 Encendido</option>
+                    <option value="2">🟨 Espera</option>
+                </InputSelect>
+                <ValidationMessage For="() => Receiver.Status" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="transmitterid" class="form-label">Transmisor asociado</label>
                 <InputSelect id="transmitterid" @bind-Value="Receiver.TransmitterId" class="form-control">
                     <option value="">Ninguno</option>
                     @foreach (var transmitter in Transmitters)
@@ -30,31 +45,13 @@
                 <ValidationMessage For="() => Receiver.TransmitterId" class="text-danger" />
             </div>
             <div class="mb-3">
-                <label for="name" class="form-label">Name:</label> 
-                <InputText id="name" @bind-Value="Receiver.Name" class="form-control" /> 
-                <ValidationMessage For="() => Receiver.Name" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="ip" class="form-label">Ip:</label> 
-                <InputText id="ip" @bind-Value="Receiver.Ip" class="form-control" /> 
-                <ValidationMessage For="() => Receiver.Ip" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="status" class="form-label">Status:</label>
-                <InputSelect id="status" @bind-Value="Receiver.Status" class="form-control">
-                    <option value="0">Apagado</option>
-                    <option value="1">Encendido</option>
-                    <option value="2">Espera</option>
-                </InputSelect>
-                <ValidationMessage For="() => Receiver.Status" class="text-danger" />
+                <label for="ip" class="form-label">IP</label>
+                <InputText id="ip" @bind-Value="Receiver.Ip" class="form-control" />
+                <ValidationMessage For="() => Receiver.Ip" class="text-danger" />
             </div>
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn btn-success"> Confirmar creación</button>
         </EditForm>
     </div>
-</div>
-
-<div>
-    <a href="/administrador">Back to List</a>
 </div>
 
 @code {

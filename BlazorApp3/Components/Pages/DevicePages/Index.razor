@@ -13,8 +13,8 @@
 <h1>Administrador de dispositivos</h1><br />
 
 <p style="text-decoration: none;">
-    <a href="transmitters/create" style="text-decoration: none;">➕ Crear ➡️ transmisor</a><br />
-    <a href="receivers/create" style="text-decoration: none;">➕ Crear ⬅️ receptor</a>
+    <a href="transmitters/create" style="text-decoration: none;">➕ Crear 📡 Transmisor</a><br />
+    <a href="receivers/create" style="text-decoration: none;">➕ Crear🗼Receptor</a>
 </p>
 
 <QuickGrid Class="table" Items="context.Device">
@@ -23,11 +23,11 @@
     <TemplateColumn Context="device" Title="Tipo">
         @if (device is Transmitter)
         {
-            <span>T</span>
+            <span>📡</span>
         }
         else if (device is Receiver)
         {
-            <span>R</span>
+            <span>🗼</span>
         }
     </TemplateColumn>
 
@@ -36,11 +36,11 @@
     <TemplateColumn Context="device" Title="Estado">
         @if (device is Transmitter transmitter)
         {
-            <span>@(transmitter.Status == 0 ? "Apagado" : transmitter.Status == 1 ? "Encendido" : "Espera")</span>
+            <span>@(transmitter.Status == 0 ? "⬛ Apagado" : transmitter.Status == 1 ? "🟩 Encendido" : "🟨 Espera")</span>
         }
         else if (device is Receiver receiver)
         {
-            <span>@(receiver.Status == 0 ? "Apagado" : receiver.Status == 1 ? "Encendido" : "Espera")</span>
+            <span>@(receiver.Status == 0 ? "⬛ Apagado" : receiver.Status == 1 ? "🟩 Encendido" : "🟨 Espera")</span>
         }
     </TemplateColumn>
 

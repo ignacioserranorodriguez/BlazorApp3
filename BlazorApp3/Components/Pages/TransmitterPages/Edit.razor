@@ -7,12 +7,14 @@
 @inject IDbContextFactory<BlazorApp3.Data.BlazorApp3Context> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Matriz de vídeo - Administrador</PageTitle>
 
-<h1>Edit</h1>
+<h1>Administrador de dispositivos</h1><br />
 
-<h4>Transmitter</h4>
+<h4><a href="/administrador" style="text-decoration: none;">⬅️</a> Editar📡Transmisor</h4>
+
 <hr />
+
 @if (Transmitter is null)
 {
     <p><em>Loading...</em></p>
@@ -26,38 +28,34 @@ else
                 <ValidationSummary />
                 <input type="hidden" name="Transmitter.Id" value="@Transmitter.Id" />
                 <div class="mb-3">
-                    <label for="url" class="form-label">Url:</label>
-                    <InputText id="url" @bind-Value="Transmitter.Url" class="form-control" />
-                    <ValidationMessage For="() => Transmitter.Url" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="name" class="form-label">Name:</label>
+                    <label for="name" class="form-label">Nombre</label>
                     <InputText id="name" @bind-Value="Transmitter.Name" class="form-control" />
                     <ValidationMessage For="() => Transmitter.Name" class="text-danger" />
                 </div>
                 <div class="mb-3">
-                    <label for="ip" class="form-label">Ip:</label>
-                    <InputText id="ip" @bind-Value="Transmitter.Ip" class="form-control" />
-                    <ValidationMessage For="() => Transmitter.Ip" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status:</label>
+                    <label for="status" class="form-label">Estado</label>
                     <InputSelect id="status" @bind-Value="Transmitter.Status" class="form-control">
-                        <option value="0">Apagado</option>
-                        <option value="1">Encendido</option>
-                        <option value="2">Espera</option>
+                        <option value="0">⬛ Apagado</option>
+                        <option value="1">🟩 Encendido</option>
+                        <option value="2">🟨 Espera</option>
                     </InputSelect>
                     <ValidationMessage For="() => Transmitter.Status" class="text-danger" />
                 </div>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <div class="mb-3">
+                    <label for="url" class="form-label">URL</label>
+                    <InputText id="url" @bind-Value="Transmitter.Url" class="form-control" />
+                    <ValidationMessage For="() => Transmitter.Url" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="ip" class="form-label">IP</label>
+                    <InputText id="ip" @bind-Value="Transmitter.Ip" class="form-control" />
+                    <ValidationMessage For="() => Transmitter.Ip" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Confirmar edición</button>
             </EditForm>
         </div>
     </div>
 }
-
-<div>
-    <a href="/administrador">Back to List</a>
-</div>
 
 @code {
     [SupplyParameterFromQuery]

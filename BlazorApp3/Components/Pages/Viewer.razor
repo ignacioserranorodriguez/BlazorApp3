@@ -12,7 +12,7 @@
 
 <h1>Visualizador de dispositivos</h1><br />
 
-<h3>Transmisores</h3>
+<h4>📡Transmisores</h4>
 
 <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false"
     FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false"
@@ -32,22 +32,22 @@
             <Template Context="data">
                 @if (data.Status == 0)
                 {
-                    <span>Apagado</span>
+                    <span>⬛ Apagado</span>
                 }
                 else if (data.Status == 1)
                 {
-                    <span>Encendido</span>
+                    <span>🟩 Encendido</span>
                 }
                 else if (data.Status == 2)
                 {
-                    <span>Espera</span>
+                    <span>🟨 Espera</span>
                 }
             </Template>
         </RadzenDataGridColumn>
     </Columns>
 </RadzenDataGrid><br />
 
-<h3>Receptores</h3>
+<h4>🗼Receptores</h4>
 
 <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false"
     FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false"
@@ -74,15 +74,15 @@
             <Template Context="data">
                 @if (data.Status == 0)
                 {
-                    <span>Apagado</span>
+                    <span>⬛ Apagado</span>
                 }
                 else if (data.Status == 1)
                 {
-                    <span>Encendido</span>
+                    <span>🟩 Encendido</span>
                 }
                 else if (data.Status == 2)
                 {
-                    <span>Espera</span>
+                    <span>🟨 Espera</span>
                 }
             </Template>
         </RadzenDataGridColumn>
