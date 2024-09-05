@@ -36,7 +36,6 @@
             <div class="mb-3">
                 <label for="transmitterid" class="form-label">Transmisor asociado</label>
                 <InputSelect id="transmitterid" @bind-Value="Receiver.TransmitterId" class="form-control">
-                    <option value="">Ninguno</option>
                     @foreach (var transmitter in Transmitters)
                     {
                         <option value="@transmitter.Id">@transmitter.Name</option>
