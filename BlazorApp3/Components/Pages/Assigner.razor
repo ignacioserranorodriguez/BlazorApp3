@@ -38,7 +38,8 @@
 
 <br />
 
-<RadzenButton Click=@(args => Save("Primary button")) Text="Guardar" ButtonStyle="ButtonStyle.Primary" />
+<RadzenButton Click=@(args => ApplyChanges("Primary button")) Text="Aplicar cambios"
+    ButtonStyle="ButtonStyle.Primary" />
 
 @code {
 
@@ -125,7 +126,7 @@
         }
     }
 
-    private async void Save(string buttonName)
+    private async void ApplyChanges(string buttonName)
     {
         try
         {
