@@ -62,7 +62,14 @@
         @{
             if (device is Receiver receiver)
             {
-                <span>@receiver.Transmitter.Name</span>
+                if (receiver.Transmitter != null && receiver.Transmitter.Name != null)
+                {
+                    <span>@receiver.Transmitter.Name</span>
+                }
+                else
+                {
+                    <span>No tiene</span>
+                }
             }
             else
             {
