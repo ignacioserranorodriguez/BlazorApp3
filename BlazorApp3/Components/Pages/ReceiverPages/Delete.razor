@@ -14,7 +14,6 @@
 <hr />
 
 <div>
-
     @if (receiver is null)
     {
         <p><em>Loading...</em></p>
@@ -22,16 +21,8 @@
     else
     {
         <dl class="row">
-            <dt class="col-sm-2">TransmitterId</dt>
-            <dd class="col-sm-10">@receiver.TransmitterId</dd>
-        </dl>
-        <dl class="row">
             <dt class="col-sm-2">Nombre</dt>
             <dd class="col-sm-10">@receiver.Name</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">IP</dt>
-            <dd class="col-sm-10">@receiver.Ip</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">Estado</dt>
@@ -48,8 +39,16 @@
                 @statusText
             </dd>
         </dl>
-        <EditForm method="post" Model="receiver" OnValidSubmit="DeleteReceiver" FormName="delete" Enhance>
-            <button type="submit" class="btn btn-danger" disabled="@(receiver is null)">Confirmar eliminación</button>
+        <dl class="row">
+            <dt class="col-sm-2">Transmisor asociado</dt>
+            <dd class="col-sm-10">@receiver.Transmitter?.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">IP</dt>
+            <dd class="col-sm-10">@receiver.Ip</dd>
+        </dl>
+        <EditForm Model="@receiver" OnValidSubmit="DeleteReceiver" FormName="deleteReceiverForm">
+            <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
         </EditForm>
     }
 </div>
@@ -57,13 +56,16 @@
 @code {
     Receiver? receiver;
 
+    [Parameter]
     [SupplyParameterFromQuery]
     public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        receiver = await context.Receiver.FirstOrDefaultAsync(m => m.Id == Id);
+        receiver = await context.Receiver
+        .Include(r => r.Transmitter) // Include the Transmitter entity
+        .FirstOrDefaultAsync(m => m.Id == Id);
 
         if (receiver is null)
         {
@@ -71,7 +73,7 @@
         }
     }
 
-    public async Task DeleteReceiver()
+    private async Task DeleteReceiver()
     {
         using var context = DbFactory.CreateDbContext();
         context.Receiver.Remove(receiver!);
