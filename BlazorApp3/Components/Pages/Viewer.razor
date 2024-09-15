@@ -100,15 +100,15 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (transmitters.Count == 0 || receivers.Count == 0)
+        {
+            await Task.Delay(400); // Wait for 500 milliseconds (0.5 seconds)
+        }
         context = await DbFactory.CreateDbContextAsync();
         receivers = await context.Receiver.ToListAsync();
         transmitters = await context.Transmitter.ToListAsync();
         transmitterNames = transmitters.Select(d => d.Name ?? string.Empty).ToList();
         receiverNames = receivers.Select(d => d.Name ?? string.Empty).ToList();
-        if (transmitters.Count == 0 || receivers.Count == 0)
-        {
-            await Task.Delay(400); // Wait for 500 milliseconds (0.5 seconds)
-        }
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
