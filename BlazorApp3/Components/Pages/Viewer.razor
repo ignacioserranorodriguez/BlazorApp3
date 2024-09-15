@@ -10,54 +10,79 @@
 
 <PageTitle>Matriz de vídeo - Visualizador</PageTitle>
 
-<h1>Visualizador de dispositivos</h1><br />
+<h1>Visualizador de dispositivos</h1>
 
-<h4>📡Transmisores</h4>
+<br />
 
-<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false"
-    FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false"
-    PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false" Data="@transmitters" ColumnWidth="300px"
-    LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
-    <Columns>
-        <RadzenDataGridColumn Title="Imagen" Width="200px" TextAlign="TextAlign.Center">
-            <Template Context="data">
-                @if (data.Status != 0 && data.Status != 2)
-                {
-                    <RadzenImage Path="@data.Url" Style="width: 15rem;" AlternateText="Image" />
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="Name" Title="Nombre" Width="150px" />
-        <RadzenDataGridColumn Title="Estado" Width="300px">
-            <Template Context="data">
-                @if (data.Status == 0)
-                {
-                    <span>⬛ Apagado</span>
-                }
-                else if (data.Status == 1)
-                {
-                    <span>🟩 Encendido</span>
-                }
-                else if (data.Status == 2)
-                {
-                    <span>🟨 Espera</span>
-                }
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid><br />
+<div style="margin-bottom: 1rem;">
+    <label for="profileSelect" style="font-weight: bold; margin-right: 0.5rem;">Perfil</label>
+    <InputSelect id="profileSelect" @bind-Value="selectedProfileId" @onchange="OnProfileChanged"
+        style="padding: 0.5rem; border-radius: 0.25rem; border: 1px solid #ccc;">
+        @foreach (var profile in profiles)
+        {
+            <option value="@profile.Id">@profile.Name</option>
+        }
+    </InputSelect>
+</div>
 
-<h4>🗼Receptores</h4>
+<br />
 
-<RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false"
-    FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false"
-    PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false" Data="@receivers" ColumnWidth="300px"
-    LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
-    <Columns>
-        <RadzenDataGridColumn Title="Imagen" Width="200px" TextAlign="TextAlign.Center">
-            <Template Context="data">
-                @if (data.Status != 0 && data.Status != 2)
-                {
+<style>
+    .grid-container .rz-column-header {
+        font-weight: bold;
+    }
+</style>
+
+<div class="grid-container">
+    <h4>📡Transmisores</h4>
+
+    <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false"
+        FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false"
+        PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false" Data="@transmitters" ColumnWidth="200px"
+        LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+        <Columns>
+            <RadzenDataGridColumn Title="Imagen" Width="200px" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    @if (data.Status != 0 && data.Status != 2)
+                    {
+                        <RadzenImage Path="@data.Url" Style="width: 15rem;" AlternateText="Image" />
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="Name" Title="Nombre" Width="150px" />
+            <RadzenDataGridColumn Title="Estado" Width="150px">
+                <Template Context="data">
+                    @if (data.Status == 0)
+                    {
+                        <span>⬛ Apagado</span>
+                    }
+                    else if (data.Status == 1)
+                    {
+                        <span>🟩 Encendido</span>
+                    }
+                    else if (data.Status == 2)
+                    {
+                        <span>🟨 Espera</span>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Title="" Width="150px">
+                <Template Context="data">
+                    <!-- Empty column to match the number of columns in the second grid -->
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid><br />
+
+    <h4>🗼Receptores</h4>
+
+    <RadzenDataGrid AllowFiltering="false" AllowColumnResize="false" AllowAlternatingRows="false"
+        FilterMode="FilterMode.Advanced" AllowSorting="false" PageSize="5" AllowPaging="false"
+        PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="false" Data="@receivers" ColumnWidth="200px"
+        LogicalFilterOperator="LogicalFilterOperator.Or" SelectionMode="DataGridSelectionMode.Single">
+        <Columns>
+            <RadzenDataGridColumn Title="Imagen" Width="200px" TextAlign="TextAlign.Center">
+                <Template Context="data">
                     @if (data.Status != 0 && data.Status != 2)
                     {
                         var transmitter = transmitters.FirstOrDefault(t => t.Id == data.TransmitterId && t.Status == 1);
@@ -66,49 +91,82 @@
                             <RadzenImage Path="@transmitter.Url" Style="width: 15rem;" AlternateText="Image" />
                         }
                     }
-                }
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn Property="Name" Title="Nombre" Width="150px" />
-        <RadzenDataGridColumn Title="Estado" Width="300px">
-            <Template Context="data">
-                @if (data.Status == 0)
-                {
-                    <span>⬛ Apagado</span>
-                }
-                else if (data.Status == 1)
-                {
-                    <span>🟩 Encendido</span>
-                }
-                else if (data.Status == 2)
-                {
-                    <span>🟨 Espera</span>
-                }
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
-
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="Name" Title="Nombre" Width="150px" />
+            <RadzenDataGridColumn Title="Estado" Width="150px">
+                <Template Context="data">
+                    @if (data.Status == 0)
+                    {
+                        <span>⬛ Apagado</span>
+                    }
+                    else if (data.Status == 1)
+                    {
+                        <span>🟩 Encendido</span>
+                    }
+                    else if (data.Status == 2)
+                    {
+                        <span>🟨 Espera</span>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Title="Transmisor Asociado" Width="150px">
+                <Template Context="data">
+                    @{
+                        var transmitter = transmitters.FirstOrDefault(t => t.Id == data.TransmitterId);
+                    }
+                    @transmitter?.Name
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</div>
 
 @code {
-
     BlazorApp3Context context = default!;
     private List<Transmitter> transmitters = new List<Transmitter>();
     private List<Receiver> receivers = new List<Receiver>();
-    IEnumerable<string> transmitterNames = new List<string>();
-    IEnumerable<string> receiverNames = new List<string>();
+    private List<Profile> profiles = new List<Profile>();
+    private int selectedProfileId = 1; // Default profile ID
 
     protected override async Task OnInitializedAsync()
     {
-        if (transmitters.Count == 0 || receivers.Count == 0)
-        {
-            await Task.Delay(400); // Wait for 500 milliseconds (0.5 seconds)
-        }
         context = await DbFactory.CreateDbContextAsync();
-        receivers = await context.Receiver.ToListAsync();
+        profiles = await context.Profile.ToListAsync();
         transmitters = await context.Transmitter.ToListAsync();
-        transmitterNames = transmitters.Select(d => d.Name ?? string.Empty).ToList();
-        receiverNames = receivers.Select(d => d.Name ?? string.Empty).ToList();
+        await LoadReceiversForSelectedProfile();
+    }
+
+    private async Task LoadReceiversForSelectedProfile()
+    {
+        // Fetch all receivers from the database
+        receivers = await context.Receiver.ToListAsync();
+
+        // Fetch all connections for the selected profile
+        var connections = await context.Connection
+        .Where(c => c.ProfileId == selectedProfileId)
+        .Include(c => c.Transmitter)
+        .Include(c => c.Receiver)
+        .ToListAsync();
+
+        // Update each Receiver with the corresponding TransmitterId from the Connection
+        foreach (var connection in connections)
+        {
+            var receiver = receivers.FirstOrDefault(r => r.Id == connection.ReceiverId);
+            if (receiver != null)
+            {
+                receiver.TransmitterId = connection.TransmitterId;
+            }
+        }
+
+        // Save changes to the database
+        await context.SaveChangesAsync();
+    }
+
+    private async Task OnProfileChanged(ChangeEventArgs e)
+    {
+        selectedProfileId = int.Parse(e.Value.ToString());
+        await LoadReceiversForSelectedProfile();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
