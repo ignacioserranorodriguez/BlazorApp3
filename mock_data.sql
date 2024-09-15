@@ -12,7 +12,7 @@ INSERT INTO `Device` (`Id`, `Name`, `Ip`, `Status`, `Discriminator`, `Transmitte
 -- Insert data into Profile table
 INSERT INTO `Profile` (`Id`, `Name`) VALUES
 (1, 'Por defecto'),
-(2, 'Perfil 2');
+(2, 'Perfil 1');
 
 -- Insert data into Connection table
 INSERT INTO `Connection` (`Id`, `TransmitterId`, `ReceiverId`, `ProfileId`) VALUES
