@@ -25,33 +25,3 @@
 </body>
 
 </html>
-
-@code {
-    private List<Receiver> receivers = new List<Receiver>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Fetch all receivers from the database
-        receivers = await DbContext.Receiver.ToListAsync();
-
-        // Fetch all connections for the profile with Id 1
-        var connections = await DbContext.Connection
-        .Where(c => c.ProfileId == 1)
-        .Include(c => c.Transmitter)
-        .Include(c => c.Receiver)
-        .ToListAsync();
-
-        // Update each Receiver with the corresponding TransmitterId from the Connection
-        foreach (var connection in connections)
-        {
-            var receiver = receivers.FirstOrDefault(r => r.Id == connection.ReceiverId);
-            if (receiver != null)
-            {
-                receiver.TransmitterId = connection.TransmitterId;
-            }
-        }
-
-        // Save changes to the database
-        await DbContext.SaveChangesAsync();
-    }
-}

@@ -19,4 +19,8 @@ INSERT INTO `Connection` (`Id`, `TransmitterId`, `ReceiverId`, `ProfileId`) VALU
 (1, 1, 5, 1),
 (2, 1, 6, 1),
 (3, 2, 7, 1),
-(4, 2, 8, 1);
+(4, 2, 8, 1),
+(5, 3, 5, 2),
+(6, 3, 6, 2),
+(7, 4, 7, 2),
+(8, 4, 8, 2);
