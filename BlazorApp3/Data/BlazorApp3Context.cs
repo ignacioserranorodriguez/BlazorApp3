@@ -13,6 +13,8 @@ namespace BlazorApp3.Data
         public DbSet<Device> Device { get; set; } = default!;
         public DbSet<Transmitter> Transmitter { get; set; } = default!;
         public DbSet<Receiver> Receiver { get; set; } = default!;
+        public DbSet<Profile> Profile { get; set; } = default!;
+        public DbSet<Connection> Connection { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

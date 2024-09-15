@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlazorApp3.Models;
-
 public class Device
 {
     public int Id { get; set; }
